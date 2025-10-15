@@ -78,8 +78,8 @@ div#datiscuola{margin-bottom:15px;border-bottom:1px solid #eee;}
 
                     <div class="col-xs-12 uneditable" id="datiscuola">
                         <div class="control-group col-xs-12">
-                            <label class="control-label">Istituto:</label>
-                            <span class="control" id="nomeIstituto"><?php echo $scuola['DENOMINAZIONEISTITUTORIFERIMENTO'];?></span>
+                            <label class="control-label">Scuola:</label>
+                            <span class="control" id="nomeScuola"><?php echo $scuola['DENOMINAZIONESCUOLA'];?></span>
                         </div>    
                         <div class="control-group col-xs-4">
                             <label class="control-label">Regione:</label>

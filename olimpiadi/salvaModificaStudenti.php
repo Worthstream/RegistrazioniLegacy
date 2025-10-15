@@ -115,4 +115,3 @@ echo "<p> Se avesse bisogno di correggere o aggiornare questa lista può visitar
     $body .= $table."</body></html>";
 
     mail($scuola['MAILREFERENTE'], $subject,$body,$headers);
-
