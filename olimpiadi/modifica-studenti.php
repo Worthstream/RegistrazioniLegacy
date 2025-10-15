@@ -1,0 +1,273 @@
+<?php
+require_once('config.php');
+
+if ($date > $chiusuraModulo) {
+    echo "<body>";
+    echo "<p>{$messaggioChiusura}</p>";
+    echo "<!-- " . $_SERVER['REMOTE_ADDR'] . "-->";
+    echo "</body>";
+}else{
+
+    if (empty($_REQUEST['id'])) {
+        die('Nessun codice scuola inserito');
+    }
+
+try {
+    $db = new PDO($config['string'], $config['dbname'], $config['dbpass'], array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+    $stmt = $db->prepare("SELECT * FROM scuole_master WHERE CODICESCUOLA = ?");
+    $stmt->execute(array(strtoupper($_REQUEST['id'])));
+    $scuola = $stmt->fetch(PDO::FETCH_ASSOC);
+} catch(PDOException $ex) {
+    echo $ex->getMessage();
+}
+
+if (!$scuola){
+    die('Non è stata trovata nessuna scuola con codice: ' . $_REQUEST['id']);
+}
+if(empty($scuola['PASSWORD'])){
+    die("La scuola " . ucwords($scuola['DENOMINAZIONESCUOLA']) . " non è ancora registrata alle Olimpiadi di statistica.");
+}
+
+try {
+    $stmt = $db->prepare("SELECT * FROM studenti WHERE id_scuola=? and deleted=?");
+    $stmt->execute(array(strtoupper($_REQUEST['id']),false));
+    $studenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $ex) {
+    echo $ex->getMessage();
+}
+
+?>
+<html>
+    <head>
+        <base target="_parent" />
+ 	    <link href="css/google-fonts.css?family=Open+Sans" rel="stylesheet"> 
+        <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
+        <link type="text/css" rel="stylesheet" href="css/bootstrap-istat.css" />
+        <link type="text/css" rel="stylesheet" href="css/docs.min.css" />
+        <link type="text/css" rel="stylesheet" href="css/modulopubblicazioni.css" />        
+        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.validate.js"></script>
+        <script type="text/javascript" src="js/jquery.repeater.js"></script>
+        <script type="text/javascript" src="js/olimpiadi.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/jquery.md5.js"></script>
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+<style type="text/css">
+div.informativatitle{font-family:"Candara Bold",serif;font-size:12.1px;font-weight:bold;font-style:normal;text-decoration: none;padding:2px;}
+div.informativatext{font-family:"Candara",serif;font-size:12.1px;font-weight:normal;font-style:normal;text-decoration: none;padding:3px}
+div.informativalist{font-family:"Calibri",serif;font-size:12.1px;font-weight:normal;font-style:normal;text-decoration: none; padding:3px 3px 3px 5px}
+div#datiscuola{margin-bottom:15px;border-bottom:1px solid #eee;}
+</style>
+        <title>
+            Modulo iscrizione studenti alle Olimpiadi italiane di statistica 2026
+        </title>
+    </head>
+    
+<body style="font-family: 'Open Sans', sans-serif;">
+        <div class="container">
+            <div class="col-xs-12">
+                <form action="salvaModificaStudenti.php" id="mainmodule" method="post" class="form-horizontal">
+                    <fieldset>
+                        <h2 style="float:left;clear:none">Iscrizione studenti alle olimpiadi italiane di statistica 2026</h2>
+                        <img src="logoSis.png" style="width:100px;float:right;padding:2em 1em 0 1em"/>
+                        <img src="marchio-1.gif" style="width:100px;float:right;padding:2em 1em 0 1em"/>
+                        <hr style="clear:both">
+                    <div style="padding:25px">
+
+                    <div class="col-xs-12 uneditable" id="datiscuola">
+                        <div class="control-group col-xs-12">
+                            <label class="control-label">Istituto:</label>
+                            <span class="control" id="nomeIstituto"><?php echo $scuola['DENOMINAZIONEISTITUTORIFERIMENTO'];?></span>
+                        </div>    
+                        <div class="control-group col-xs-4">
+                            <label class="control-label">Regione:</label>
+                            <span class="control" id="nomeRegione"><?php echo $scuola['REGIONE'];?></span>
+                        </div>
+                        <div class="control-group col-xs-4">
+                            <label class="control-label">Provincia:</label>
+                            <span class="control" id="nomeProvincia"><?php echo $scuola['PROVINCIA'];?></span>
+                        </div>
+                        <div class="control-group col-xs-4">
+                            <label class="control-label">Comune:</label>
+                            <span class="control" id="nomeComune"><?php echo $scuola['DESCRIZIONECOMUNE'];?></span>
+                        </div>                 
+                    </div>
+                    <div class="col-xs-12">
+                        <p>Gentile referente scolastico,</p>
+                        <p>La invitiamo a riempire i campi sottostanti con i dati degli studenti che intendono partecipare alle Olimpiadi. Al termine, selezioni "Invia modulo".</p>
+                        <p>All'indirizzo di posta elettronica che avrà indicato Le invieremo la conferma dell’avvenuta registrazione.</p>
+                        <a href="aggiungi-studenti.php?id=<?php echo $_REQUEST['id']; ?>"><span class="col-xs-6 btn btn-primary">Aggiungi Studenti</span></a>
+                        <span class="col-xs-6 btn btn-default">Modifica Studenti</span>
+                    </div>
+                        <div class="control-group col-xs-12">
+                            <label class="control-label name" for="scuola-input-1">Password scelta al momento dell'iscrizione:</label><a href="recuperaPassword.php"> (Recupera password)</a>
+                            <div class="controls">
+                                <input autocomplete="off" class="form-control gui-input" type="password" name="password" id="school-input-1" required=""/>
+                            </div>
+                        </div>
+                        <div id="formStudenti" class="uneditable" style="display:none">
+                            <div class="control-group col-xs-12 repeater">
+
+                                <div class="col-xs-1">
+                                    <div class="form-group">
+                                        <label>Classe</label> 
+                                    </div>
+                                </div>                                
+                                <div class="col-xs-4">
+                                    <div class="form-group">
+                                        <label>Cognome</label> 
+                                    </div>
+                                </div>                                
+                                <div class="col-xs-4">
+                                    <div class="form-group">
+                                        <label>Nome</label> 
+                                    </div>
+                                </div>                                                           
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label>Genere</label> 
+                                    </div>
+                                </div>                                                      
+                            </div>
+                            <div class="control-group col-xs-12 repeater uneditable">
+                                <div data-repeater-list="studenti">
+<?php
+if(empty($studenti)){ 
+    $studenti = array (
+        0 => 
+        array (
+          'id' => '',
+          'id_scuola' => '',
+          'nome' => '',
+          'cognome' => '',
+          'classe' => '',
+          'sesso' => 'm',
+        ),
+      ) ;           
+}
+foreach($studenti as $studente){
+    $text = <<<EOD
+                                <div data-repeater-item>
+                                        <div class="col-xs-1">
+                                            <div class="form-group">
+                                                <label for="classe"></label> 
+                                                <select id="classe" name="studenti[0][classe]" class="form-control" required="" autocomplete="off">
+EOD;
+
+$text .= $studente['classe'] == "Prima"   ? "<option selected>Prima</option>"   : "<option>Prima</option>";
+$text .= $studente['classe'] == "Seconda" ? "<option selected>Seconda</option>" : "<option>Seconda</option>";
+$text .= $studente['classe'] == "Terza"   ? "<option selected>Terza</option>"   : "<option>Terza</option>";
+$text .= $studente['classe'] == "Quarta"  ? "<option selected>Quarta</option>"  : "<option>Quarta</option>";
+
+$text .= <<<EOD
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="cognome"></label>
+                                                <input autocomplete="off" id="cognome" name="studenti[0][cognome]" size="30" class="form-control gui-input" placeholder="Cognome" required="" type="text" value="{$studente['cognome']}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="nome"></label>
+                                                <input autocomplete="off" id="nome" name="studenti[0][nome]" size="30" class="form-control gui-input" placeholder="Nome" required="" type="text" value="{$studente['nome']}"/>
+                                            </div>
+                                        </div>                                      
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <div class="input-group" style="padding-left: 10px;padding-top: 5px;">
+                                                    <label for="studenti[0][genere]"></label>
+EOD;
+
+$text .= '<label class="radio-inline"><input type="radio" value="m" name="studenti[0][genere]" required="" ' . ($studente['sesso']=='m'?'checked':'') . '>M</label>';
+$text .= '<label class="radio-inline"><input type="radio" value="f" name="studenti[0][genere]" required="" ' . ($studente['sesso']=='f'?'checked':'') . '>F</label>';
+
+$text .= <<<EOD
+                                                    <span class="input-group-btn pad-l10">
+                                                        <span class="btn btn-danger" style="padding:6px 12px" data-repeater-delete=""><span class="glyphicon glyphicon-remove"></span> 
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12"></div>
+                                    </div>
+EOD;
+echo $text;
+}
+?>
+                                </div>
+                                <p style="float:right;"><span data-repeater-create class="btn btn-primary" style="padding:6px 12px"><span  class="glyphicon glyphicon-plus"></span></span></p>
+                            </div>
+                            <div class="col-xs-12" style="text-align: right;">
+                                <label class="radio-inline">
+                                    <input value="Ok" name="informativa" required="true" aria-required="true" type="radio" id="informativaradio">
+                                        Ho ricevuto le <a href="AutorizzazioneGenitori.pdf" download="AutorizzazioneGenitori.pdf">autorizzazioni per l'iscrizione dei ragazzi.</a>
+                                </label>
+                            </div>
+                            <div class="control-group col-xs-12">
+                                <div class="form-actions col-xs-12">
+                                    <input type="hidden" name="id_scuola" value="<?php echo $_REQUEST['id'];?>">
+                                    <input type="submit" value="Invia modulo" name="Invia" style="width:107px;margin-top:1em;float:right" class="btn btn-primary" id="school-input-37" />
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+<script>
+    $(document).ready(function () {
+	$('#informativaradio').prop('checked', false);
+	$('#informativalink').click( function() {
+			$('#informativapdf').toggle();
+		}
+	);
+        $('.repeater').repeater({
+            show: function () {
+                $(this).slideDown(200);
+            },
+
+            hide: function (deleteElement) {
+                $(this).slideUp(deleteElement);
+            },
+            isFirstItemUndeletable: false
+        });
+
+        $("#school-input-1").on('change keyup paste mouseup', function() {
+            if ($(this).val().length > 7) {
+                var hash = $.md5($(this).val() + 'SaltOlimpiadi2018' + '<?php echo strtoupper($_REQUEST['id']);?>');
+                console.log('Checking pwd: ' + hash);
+                $.post( "checkPwdScuola.php", { hash: hash, id: '<?php echo strtoupper($_REQUEST['id']);?>' } ,function( data ) {
+                    console.log(data);
+                    if(data === 'true'){
+                        $('#formStudenti').show();
+                    }
+                });
+            }
+        });
+
+        $("#mainmodule").validate({
+            rules: {
+                password: {
+                    required: true,
+                    minlength: 8
+                },
+                genere: {
+                    required: true
+                }
+            }            
+        }); 
+    });
+</script>
+    </body>
+</html>
+<?php
+}
+?>
+
