@@ -50,8 +50,8 @@ $table = '<table><tr><th>Nome</th><th>Cognome</th><th>Classe</th><th>Sesso</th><
 
 
 foreach($_POST['studenti'] as $studente){
-    $nome = $studente['nome'];
-    $cognome = $studente['cognome'];
+    $nome = htmlspecialchars($studente['nome'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $cognome = htmlspecialchars($studente['cognome'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $classe = $studente['classe'];
     $sesso = $studente['genere'];
     $email = substr(str_shuffle(str_repeat('23456789abcdefghjkmnpqrstuvwxyz', 8)), 0, 8);
