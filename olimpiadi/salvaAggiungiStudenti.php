@@ -23,6 +23,7 @@ if (empty($scuola)){
 
 if ($scuola['PASSWORD'] !== md5($_REQUEST['password'] . 'SaltOlimpiadi2018' . $codicescuola)){
     echo "La password inserita non è corretta.";
+    die();
 }
 
 //Prepare insert for new students

@@ -102,9 +102,9 @@ if ($date > $chiusuraModulo) {
                 <div>
 		<p>Leggi l'<a href="InformativaDocenti.pdf" download="InformativaDocenti.pdf">informativa per i docenti</a>.</p>
 		<p>Leggi il <a href="Bando.pdf" download="Bando.pdf">Bando</a> e il <a href="RegolamentoOlimpiadi.pdf">Regolamento</a>.</p>
-		<p>L'Istituto nazionale di statistica e la Società italiana di statistica organizzano la dodicesima edizione delle Olimpiadi italiane di statistica, rivolte agli studenti che frequentano le classi I, II, III e IV degli istituti di istruzione secondaria di secondo grado. Gli obiettivi sono di suscitare l'interesse degli studenti verso l'analisi dei dati e di metterli in condizione di cogliere correttamente il significato delle informazioni quantitative che ricevono nell'esperienza di ogni giorno.</p>
+		<p>L'Istituto nazionale di statistica e la Società italiana di statistica organizzano la sedicesima edizione delle Olimpiadi italiane di statistica, rivolte agli studenti che frequentano le classi I, II, III e IV degli istituti di istruzione secondaria di secondo grado. Gli obiettivi sono di suscitare l'interesse degli studenti verso l'analisi dei dati e di metterli in condizione di cogliere correttamente il significato delle informazioni quantitative che ricevono nell'esperienza di ogni giorno.</p>
 
-                <p>Ulteriori informazioni sono disponibili nella pagina dedicata alle <a href="https://www.istat.it/?s=Olimpiadi+italiane+di+statistica">Olimpiadi italiane di statistica</a></p>
+                <p>Ulteriori informazioni sono disponibili nella pagina dedicata alle <a href="https://www.istat.it/notizia/olimpiadi-italiane-di-statistica-2026/">Olimpiadi italiane di statistica</a></p>
             </div>
         </div>
 <script>

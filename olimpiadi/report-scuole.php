@@ -47,7 +47,7 @@ require_once('config.php');
             fputcsv($output, $row);
         }
         fclose($output);
-    } catch (PDOException $e) {
+    } catch (PDOException $ex) {
         echo $ex->getMessage();
     }
 
