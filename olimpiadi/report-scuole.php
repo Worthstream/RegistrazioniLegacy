@@ -3,6 +3,7 @@ require_once('config.php');
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
     $whiteList = [
+        'registrazioni.istat.it',
         'registrazioni.sviluppo.istat.it',
         'registrazioni.collaudo.istat.it',
     ];
